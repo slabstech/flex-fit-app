@@ -9,3 +9,7 @@ Flex Fitness - Mobile App
   - https://instagram.com/flexfitnessbynithish_
 - Google Maps
   - https://share.google/wzZoI7U1YKgsvlMA6
+
+
+- App Link 
+  - https://play.google.com/apps/internaltest/4701656948605087729
