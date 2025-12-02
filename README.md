@@ -12,4 +12,8 @@ Flex Fitness - Mobile App
 
 
 - App Link 
-  - https://play.google.com/apps/internaltest/4701656948605087729
+  - Close Testing
+    - https://play.google.com/store/apps/details?id=com.slabstech.health.flexfit
+    
+  - Internal Test
+    - https://play.google.com/apps/internaltest/4701656948605087729
