@@ -1,13 +1,13 @@
-package com.slabstech.health.flexfit.ui.slideshow
+package com.slabstech.health.flexfit.ui.userplan
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 
-class SlideshowViewModel : ViewModel() {
+class UserplanViewModel : ViewModel() {
 
     private val _text = MutableLiveData<String>().apply {
-        value = "This is slideshow Fragment"
+        value = "User Plan - Curated"
     }
     val text: LiveData<String> = _text
 }
