@@ -75,6 +75,7 @@ dependencies {
     implementation(libs.kotlinx.coroutines.android)
     implementation(libs.lottie.compose)
 
+
     // === Testing (unchanged) ===
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
