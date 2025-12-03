@@ -1,7 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <!-- === YOUR ORIGINAL 3 ITEMS — PRESERVED AT THE TOP === -->
+    <!-- NEW: Dashboard at the top -->
+    <item
+        android:id="@+id/nav_dashboard"
+        android:icon="@drawable/ic_menu_dashboard"
+        android:title="Dashboard"
+        android:checked="true" />   <!-- Auto-selected on start -->
+
     <item
         android:id="@+id/nav_home"
         android:icon="@drawable/ic_menu_home"
@@ -17,19 +23,7 @@
         android:icon="@drawable/ic_menu_plan"
         android:title="My Plan" />
 
-    <!-- === DIVIDER === -->
-    <item android:title="">
-        <menu />
-    </item>
-
-    <!-- === NEW GAMIFIED FLEXFIT SECTION === -->
-    <group android:id="@+id/group_gamification">
-        <item
-            android:id="@+id/nav_dashboard"
-            android:icon="@drawable/ic_menu_dashboard"
-            android:visible="false"
-            android:title="Dashboard" />
-
+    <group android:checkableBehavior="single">
         <item
             android:id="@+id/nav_workouts"
             android:icon="@drawable/ic_menu_workout"
@@ -38,9 +32,7 @@
         <item
             android:id="@+id/nav_profile"
             android:icon="@drawable/ic_menu_profile"
-            android:title="Profile"
-            android:visible="false"
-            />
+            android:title="Profile" />
 
         <item
             android:id="@+id/nav_leaderboard"

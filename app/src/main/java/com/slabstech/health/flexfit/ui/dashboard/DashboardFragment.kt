@@ -6,16 +6,18 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.compose.ui.platform.ComposeView
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.ViewModelProvider
+import androidx.fragment.app.viewModels
 import com.slabstech.health.flexfit.ui.theme.FlexFitTheme
 
 class DashboardFragment : Fragment() {
 
-    private lateinit var viewModel: DashboardViewModel
+    private val viewModel: DashboardViewModel by viewModels()
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
-        viewModel = ViewModelProvider(this)[DashboardViewModel::class.java]
-
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View {
         return ComposeView(requireContext()).apply {
             setContent {
                 FlexFitTheme {
@@ -25,6 +27,7 @@ class DashboardFragment : Fragment() {
         }
     }
 
+    // This method is called by MainActivity when FAB is pressed
     fun logQuickWorkout() {
         viewModel.logTodayWorkout()
     }

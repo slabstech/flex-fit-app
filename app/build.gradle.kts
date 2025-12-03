@@ -12,7 +12,7 @@ android {
         applicationId = "com.slabstech.health.flexfit"
         minSdk = 24
         targetSdk = 36
-        versionCode = 4
+        versionCode = 5
         versionName = "0.0.1"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"

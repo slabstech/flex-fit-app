@@ -3,8 +3,16 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/mobile_navigation"
-    app:startDestination="@+id/nav_home">
+    app:startDestination="@id/nav_dashboard">   <!-- THIS IS THE KEY LINE -->
 
+    <!-- DASHBOARD — NOW THE HOME SCREEN -->
+    <fragment
+        android:id="@+id/nav_dashboard"
+        android:name="com.slabstech.health.flexfit.ui.dashboard.DashboardFragment"
+        android:label="Dashboard"
+        tools:layout="@layout/fragment_dashboard" />
+
+    <!-- Your original screens -->
     <fragment
         android:id="@+id/nav_home"
         android:name="com.slabstech.health.flexfit.ui.home.HomeFragment"
@@ -19,15 +27,11 @@
 
     <fragment
         android:id="@+id/nav_userplan"
-        android:name="com.slabstech.health.flexfit.ui.userplan.UserplanFragment"
+        android:name="com.slabstech.health.flexfit.ui.userplan.UserPlanFragment"
         android:label="@string/menu_userplan"
         tools:layout="@layout/fragment_userplan" />
 
-    <fragment
-        android:id="@+id/nav_dashboard"
-        android:name="com.slabstech.health.flexfit.ui.dashboard.DashboardFragment"
-        android:label="Dashboard" />
-
+    <!-- New gamified screens -->
     <fragment
         android:id="@+id/nav_workouts"
         android:name="com.slabstech.health.flexfit.ui.workouts.WorkoutsFragment"
@@ -42,4 +46,5 @@
         android:id="@+id/nav_leaderboard"
         android:name="com.slabstech.health.flexfit.ui.leaderboard.LeaderboardFragment"
         android:label="Leaderboard" />
+
 </navigation>

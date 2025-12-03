@@ -1,29 +1,46 @@
 package com.slabstech.health.flexfit.ui.dashboard
 
-import androidx.compose.runtime.State
-import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.slabstech.health.flexfit.data.remote.dto.GamificationResult
 import com.slabstech.health.flexfit.repository.GamificationRepository
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
 class DashboardViewModel : ViewModel() {
     private val repository = GamificationRepository()
 
-    private val _state = mutableStateOf<GamificationResult?>(null)
-    val state: State<GamificationResult?> = _state
+    private val _state = MutableStateFlow(DashboardState())
+    val state: StateFlow<DashboardState> = _state.asStateFlow()
 
-    private val _loading = mutableStateOf(false)
-    val loading: State<Boolean> = _loading
+    init {
+        loadDashboard()
+    }
+
+    fun loadDashboard() {
+        viewModelScope.launch {
+            _state.value = _state.value.copy(isLoading = true)
+            // Simulate real data — replace with actual API later
+            _state.value = DashboardState(
+                currentStreak = 12,
+                todayWorkouts = 1,
+                currentLevel = 15,
+                totalXp = 12450,
+                weeklyRank = 38,
+                recentBadges = listOf("Morning Warrior", "12-Day Streak", "100 Workouts", "Level 15"),
+                isLoading = false,
+                userName = "Sachin"
+            )
+        }
+    }
 
     fun logTodayWorkout() {
         viewModelScope.launch {
-            _loading.value = true
             repository.logWorkout().onSuccess {
-                _state.value = it
+                // Refresh dashboard after logging
+                loadDashboard()
             }
-            _loading.value = false
         }
     }
 }
