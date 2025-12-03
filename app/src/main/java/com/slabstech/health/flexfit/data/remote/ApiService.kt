@@ -8,15 +8,15 @@ import retrofit2.http.GET
 import retrofit2.http.POST
 
 interface ApiService {
-    @GET("leaderboard/")
+    @GET("leaderboard")
     suspend fun getLeaderboard(): Response<List<LeaderboardEntry>>
 
-    @POST("workouts/")
+    @POST("workouts")
     suspend fun logWorkout(@Body request: WorkoutCreateRequest): Response<WorkoutResponse>
 
-    @GET("dashboard/")
+    @GET("dashboard")
     suspend fun getDashboard(): Response<DashboardResponse>
 
-    @GET("workouts/history/")
+    @GET("workouts/history")
     suspend fun getWorkoutHistory(): Response<List<WorkoutLog>>
 }

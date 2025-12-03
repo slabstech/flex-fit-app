@@ -1,7 +1,6 @@
 package com.slabstech.health.flexfit.repository
 
 import com.slabstech.health.flexfit.data.remote.dto.*
-import com.slabstech.health.flexfit.network.RetrofitClient
 import com.slabstech.health.flexfit.ui.workouts.WorkoutLog
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -15,9 +14,10 @@ class GamificationRepository {
             if (response.isSuccessful && response.body() != null) {
                 Result.success(response.body()!!)
             } else {
-                Result.failure(Exception("Error: ${response.message()}"))
+                Result.failure(Exception("HTTP ${response.code()} – ${response.message()}"))
             }
         } catch (e: Exception) {
+            e.printStackTrace()
             Result.failure(e)
         }
     }
