@@ -14,7 +14,7 @@ import androidx.drawerlayout.widget.DrawerLayout
 import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.fragment.NavHostFragment
 import com.slabstech.health.flexfit.databinding.ActivityMainBinding
-import com.slabstech.health.flexfit.ui.dashboard.DashboardFragment   // ← CORRECT IMPORT
+import com.slabstech.health.flexfit.ui.dashboard.DashboardFragment
 
 class MainActivity : AppCompatActivity() {
 
@@ -29,29 +29,31 @@ class MainActivity : AppCompatActivity() {
 
         setSupportActionBar(binding.appBarMain.toolbar)
 
-        // FAB — Smart: Only logs workout when Dashboard is visible
+        // FAB — Now works perfectly with Dashboard
         binding.appBarMain.fab.setOnClickListener { view ->
             val navHostFragment = supportFragmentManager
                 .findFragmentById(R.id.nav_host_fragment_content_main) as? NavHostFragment
 
             val currentFragment = navHostFragment?.childFragmentManager?.fragments?.firstOrNull()
 
-            if (currentFragment is DashboardFragment) {
-                currentFragment.logQuickWorkout()
+            when (currentFragment) {
+                is DashboardFragment -> {
+                    // Use the public function we added
+                    currentFragment.showWorkoutPicker()
 
-                Snackbar.make(view, "Workout Logged! Streak continues!", Snackbar.LENGTH_LONG)
-                    .setBackgroundTint(0xFFFF3B30.toInt())
-                    .setTextColor(Color.WHITE)
-                    .setActionTextColor(Color.WHITE)
-                    .setAction("Undo", null)
-                    .setAnchorView(binding.appBarMain.fab)
-                    .show()
-            } else {
-                // Your original behavior for other screens
-                Snackbar.make(view, "This Will Add New Workout", Snackbar.LENGTH_LONG)
-                    .setAction("Action", null)
-                    .setAnchorView(binding.appBarMain.fab)
-                    .show()
+                    Snackbar.make(view, "Choose your workout!", Snackbar.LENGTH_SHORT)
+                        .setBackgroundTint(0xFFFF3B30.toInt())
+                        .setTextColor(Color.WHITE)
+                        .setAnchorView(binding.appBarMain.fab)
+                        .show()
+                }
+                else -> {
+                    Snackbar.make(view, "Open Dashboard to log workout", Snackbar.LENGTH_LONG)
+                        .setBackgroundTint(Color.GRAY)
+                        .setTextColor(Color.WHITE)
+                        .setAnchorView(binding.appBarMain.fab)
+                        .show()
+                }
             }
         }
 
@@ -59,13 +61,12 @@ class MainActivity : AppCompatActivity() {
         val navView: NavigationView = binding.navView
         val navController = findNavController(R.id.nav_host_fragment_content_main)
 
-        // All top-level destinations (add your new ones here when ready)
         appBarConfiguration = AppBarConfiguration(
             setOf(
                 R.id.nav_home,
                 R.id.nav_schedule,
                 R.id.nav_userplan,
-                R.id.nav_dashboard,      // ← Already included
+                R.id.nav_dashboard,
                 R.id.nav_workouts,
                 R.id.nav_profile,
                 R.id.nav_leaderboard

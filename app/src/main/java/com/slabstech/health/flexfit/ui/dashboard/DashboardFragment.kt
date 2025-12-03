@@ -1,3 +1,4 @@
+// DashboardFragment.kt
 package com.slabstech.health.flexfit.ui.dashboard
 
 import android.os.Bundle
@@ -15,6 +16,11 @@ class DashboardFragment : Fragment() {
 
     private val viewModel: DashboardViewModel by viewModels()
     private var showWorkoutModal by mutableStateOf(false)
+
+    // PUBLIC function called from MainActivity
+    fun showWorkoutPicker() {
+        showWorkoutModal = true
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -39,6 +45,7 @@ class DashboardFragment : Fragment() {
                                         duration = workout.durationMin,
                                         calories = workout.calories
                                     )
+                                    showWorkoutModal = false  // Auto-dismiss after selection
                                 }
                             )
                         }
@@ -48,7 +55,9 @@ class DashboardFragment : Fragment() {
         }
     }
 
-    fun logQuickWorkout() {
-        showWorkoutModal = true
+    // Optional: hide modal when leaving fragment
+    override fun onDestroyView() {
+        super.onDestroyView()
+        showWorkoutModal = false
     }
 }

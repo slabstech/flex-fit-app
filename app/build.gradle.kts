@@ -70,6 +70,7 @@ dependencies {
     implementation(libs.retrofit.converter.moshi)
     implementation(libs.moshi.kotlin)
     implementation(libs.okhttp.logging)
+    implementation("androidx.security:security-crypto:1.1.0-alpha06")
 
     // === NEW: Coroutines & Animations ===
     implementation(libs.kotlinx.coroutines.android)

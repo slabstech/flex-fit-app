@@ -1,12 +1,18 @@
+// GamificationRepository.kt
 package com.slabstech.health.flexfit.repository
 
+import android.content.Context
 import com.slabstech.health.flexfit.data.remote.dto.*
 import com.slabstech.health.flexfit.ui.workouts.WorkoutLog
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
-class GamificationRepository {
-    private val api = RetrofitClient.instance
+class GamificationRepository(private val context: Context) {
+
+    // Create API instance with current token every time (safe & correct)
+    private val api by lazy {
+        RetrofitClient.getApiService(context)
+    }
 
     suspend fun getLeaderboard(): Result<List<LeaderboardEntry>> = withContext(Dispatchers.IO) {
         try {
@@ -15,6 +21,20 @@ class GamificationRepository {
                 Result.success(response.body()!!)
             } else {
                 Result.failure(Exception("HTTP ${response.code()} – ${response.message()}"))
+            }
+        } catch (e: Exception) {
+            e.printStackTrace()
+            Result.failure(e)
+        }
+    }
+
+    suspend fun getDashboard(): Result<UserPublic> = withContext(Dispatchers.IO) {
+        try {
+            val response = api.getDashboard()
+            if (response.isSuccessful && response.body() != null) {
+                Result.success(response.body()!!)
+            } else {
+                Result.failure(Exception("Dashboard error: ${response.code()}"))
             }
         } catch (e: Exception) {
             e.printStackTrace()
@@ -35,26 +55,13 @@ class GamificationRepository {
         }
     }
 
-    suspend fun getDashboard(): Result<DashboardResponse> = withContext(Dispatchers.IO) {
-        try {
-            val response = api.getDashboard()
-            if (response.isSuccessful && response.body() != null) {
-                Result.success(response.body()!!)
-            } else {
-                Result.failure(Exception("Error: ${response.message()}"))
-            }
-        } catch (e: Exception) {
-            Result.failure(e)
-        }
-    }
-
     suspend fun getWorkoutHistory(): Result<List<WorkoutLog>> = withContext(Dispatchers.IO) {
         try {
             val response = api.getWorkoutHistory()
             if (response.isSuccessful && response.body() != null) {
                 Result.success(response.body()!!)
             } else {
-                Result.failure(Exception("API Error"))
+                Result.failure(Exception("History error"))
             }
         } catch (e: Exception) {
             Result.failure(e)
