@@ -10,5 +10,6 @@
     <string name="menu_home">Home</string>
     <string name="menu_schedule">Schedule</string>
     <string name="menu_userplan">User Plan</string>
+    <string name="log_workout">Log Workout</string>
 
 </resources>

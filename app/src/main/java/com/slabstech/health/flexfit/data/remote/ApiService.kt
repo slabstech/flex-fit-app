@@ -19,4 +19,10 @@ interface ApiService {
 
     @GET("workouts/history")
     suspend fun getWorkoutHistory(): Response<List<WorkoutLog>>
+
+    @POST("login")
+    suspend fun login(@Body request: LoginRequest): Response<LoginResponse>
+
+    @POST("register/")
+    suspend fun register(@Body request: RegisterRequest): Response<UserPublic>
 }

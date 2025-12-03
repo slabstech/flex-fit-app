@@ -13,19 +13,34 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:usesCleartextTraffic="true"
-        android:theme="@style/Theme.FlexFit">
+        android:theme="@style/Theme.FlexFit"
+        tools:targetApi="33">
 
+        <!-- 1. Splash / Auth Launcher Activity (First screen user sees) -->
         <activity
-            android:name=".MainActivity"
+            android:name=".SplashActivity"
             android:exported="true"
-            android:label="@string/app_name"
-            android:theme="@style/Theme.FlexFit.NoActionBar">
+            android:theme="@style/Theme.FlexFit.Splash">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <!-- 2. Auth Activity (Login + Register) -->
+        <activity
+            android:name=".ui.auth.AuthActivity"
+            android:exported="false"
+            android:theme="@style/Theme.FlexFit.NoActionBar"
+            android:windowSoftInputMode="adjustResize" />
+
+        <!-- 3. Main App (Dashboard, Leaderboard, etc.) -->
+        <activity
+            android:name=".MainActivity"
+            android:exported="false"
+            android:label="@string/app_name"
+            android:theme="@style/Theme.FlexFit.NoActionBar" />
+
     </application>
 
 </manifest>
