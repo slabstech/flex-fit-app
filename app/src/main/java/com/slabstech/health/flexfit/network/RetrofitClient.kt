@@ -1,6 +1,7 @@
 // RetrofitClient.kt
 import android.content.Context
-import com.slabstech.health.flexfit.network.ApiService
+import com.slabstech.health.flexfit.data.remote.ApiService
+
 import com.slabstech.health.flexfit.network.AuthInterceptor
 import com.slabstech.health.flexfit.utils.TokenManager
 import com.squareup.moshi.Moshi
@@ -12,7 +13,7 @@ import retrofit2.converter.moshi.MoshiConverterFactory
 
 // RetrofitClient.kt (final version)
 object RetrofitClient {
-    private const val BASE_URL = "https:///"
+    private const val BASE_URL = "https://"
 
     private val moshi = Moshi.Builder()
         .add(KotlinJsonAdapterFactory())

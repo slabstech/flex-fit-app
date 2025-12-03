@@ -4,8 +4,6 @@ package com.slabstech.health.flexfit.ui.auth
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
-import com.slabstech.health.flexfit.data.remote.dto.LoginRequest
-import com.slabstech.health.flexfit.data.remote.dto.RegisterRequest
 import com.slabstech.health.flexfit.repository.AuthRepository
 import com.slabstech.health.flexfit.utils.TokenManager
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -23,12 +21,11 @@ data class AuthState(
 
 class AuthViewModel(application: Application) : AndroidViewModel(application) {
 
-    private val authRepository = AuthRepository(application)
+    private val authRepository = AuthRepository(RetrofitClient.getApiService(application))
 
     private val _state = MutableStateFlow(AuthState())
     val state: StateFlow<AuthState> = _state.asStateFlow()
 
-    // FIXED: Use proper block body, not expression
     fun updateEmail(email: String) {
         _state.value = _state.value.copy(email = email.trim(), error = null)
     }
@@ -42,14 +39,14 @@ class AuthViewModel(application: Application) : AndroidViewModel(application) {
     }
 
     fun login(onSuccess: () -> Unit) {
-        if (!isLoginInputValid()) {
-            _state.value = _state.value.copy(error = "Please enter a valid email and password")
+        if (_state.value.email.isBlank() || _state.value.password.isBlank()) {
+            _state.value = _state.value.copy(error = "Please fill email and password")
             return
         }
 
         viewModelScope.launch {
             _state.value = _state.value.copy(isLoading = true, error = null)
-            authRepository.login(LoginRequest(username = _state.value.email, password = _state.value.password))
+            authRepository.login(_state.value.email, _state.value.password)
                 .onSuccess { token ->
                     TokenManager.saveToken(getApplication(), token)
                     onSuccess()
@@ -62,39 +59,21 @@ class AuthViewModel(application: Application) : AndroidViewModel(application) {
     }
 
     fun register(onSuccess: () -> Unit) {
-        if (!isRegisterInputValid()) {
-            _state.value = _state.value.copy(error = "Please fill all fields correctly")
+        if (_state.value.username.isBlank() || _state.value.email.isBlank() || _state.value.password.length < 6) {
+            _state.value = _state.value.copy(error = "Fill all fields correctly")
             return
         }
 
         viewModelScope.launch {
             _state.value = _state.value.copy(isLoading = true, error = null)
-            authRepository.register(
-                RegisterRequest(
-                    username = _state.value.username,
-                    email = _state.value.email,
-                    password = _state.value.password
-                )
-            )
-                .onSuccess { login(onSuccess) }
+            authRepository.register(_state.value.username, _state.value.email, _state.value.password)
+                .onSuccess {
+                    login(onSuccess) // Auto-login after register
+                }
                 .onFailure {
-                    _state.value = _state.value.copy(error = "Email already registered")
+                    _state.value = _state.value.copy(error = "Email already taken")
                 }
             _state.value = _state.value.copy(isLoading = false)
         }
-    }
-
-    private fun isLoginInputValid(): Boolean {
-        val email = _state.value.email
-        return email.isNotBlank() &&
-                _state.value.password.isNotBlank() &&
-                android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches()
-    }
-
-    private fun isRegisterInputValid(): Boolean {
-        return _state.value.username.isNotBlank() &&
-                _state.value.email.isNotBlank() &&
-                _state.value.password.length >= 6 &&
-                android.util.Patterns.EMAIL_ADDRESS.matcher(_state.value.email).matches()
     }
 }
