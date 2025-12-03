@@ -2,13 +2,12 @@
 package com.slabstech.health.flexfit.data.remote
 
 import com.slabstech.health.flexfit.data.remote.dto.*
-import okhttp3.ResponseBody
 import retrofit2.Response
 import retrofit2.http.*
 
 interface ApiService {
 
-    // === AUTH ===
+    // AUTH
     @FormUrlEncoded
     @POST("login")
     suspend fun login(
@@ -19,17 +18,17 @@ interface ApiService {
     @POST("register/")
     suspend fun register(@Body request: RegisterRequest): Response<UserPublic>
 
-    // === PROTECTED ENDPOINTS ===
-    @GET("dashboard")
+    // PROTECTED ENDPOINTS — ALL WITH "/"
+    @GET("dashboard/")
     suspend fun getDashboard(@Header("Authorization") token: String): Response<UserPublic>
 
-    @GET("leaderboard")
+    @GET("leaderboard/")
     suspend fun getLeaderboard(@Header("Authorization") token: String): Response<List<LeaderboardEntry>>
 
-    @GET("workouts/history")
+    @GET("workouts/history/")
     suspend fun getWorkoutHistory(@Header("Authorization") token: String): Response<List<WorkoutResponse>>
 
-    @POST("workouts")
+    @POST("workouts/")
     suspend fun logWorkout(
         @Header("Authorization") token: String,
         @Body workout: WorkoutCreateRequest

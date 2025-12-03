@@ -4,6 +4,7 @@ package com.slabstech.health.flexfit.ui.auth
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
+import com.slabstech.health.flexfit.data.remote.RetrofitClient
 import com.slabstech.health.flexfit.repository.AuthRepository
 import com.slabstech.health.flexfit.utils.TokenManager
 import kotlinx.coroutines.flow.MutableStateFlow

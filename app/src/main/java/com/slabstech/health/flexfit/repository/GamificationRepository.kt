@@ -3,6 +3,7 @@ package com.slabstech.health.flexfit.repository
 
 import android.content.Context
 import com.slabstech.health.flexfit.data.remote.ApiService
+import com.slabstech.health.flexfit.data.remote.RetrofitClient
 import com.slabstech.health.flexfit.data.remote.dto.*
 import com.slabstech.health.flexfit.utils.TokenManager
 import kotlinx.coroutines.Dispatchers
@@ -25,7 +26,7 @@ class GamificationRepository(private val context: Context) {
             if (response.isSuccessful && response.body() != null) {
                 Result.success(response.body()!!)
             } else {
-                Result.failure(Exception("Leaderboard error: ${response.code()}"))
+                Result.failure(Exception("Leaderboard: ${response.code()}"))
             }
         } catch (e: Exception) {
             Result.failure(e)
@@ -38,7 +39,7 @@ class GamificationRepository(private val context: Context) {
             if (response.isSuccessful && response.body() != null) {
                 Result.success(response.body()!!)
             } else {
-                Result.failure(Exception("Dashboard error: ${response.code()}"))
+                Result.failure(Exception("Dashboard: ${response.code()}"))
             }
         } catch (e: Exception) {
             Result.failure(e)
@@ -51,7 +52,7 @@ class GamificationRepository(private val context: Context) {
             if (response.isSuccessful && response.body() != null) {
                 Result.success(response.body()!!)
             } else {
-                Result.failure(Exception("Failed to log workout: ${response.message()}"))
+                Result.failure(Exception("Log workout failed"))
             }
         } catch (e: Exception) {
             Result.failure(e)
@@ -64,7 +65,7 @@ class GamificationRepository(private val context: Context) {
             if (response.isSuccessful && response.body() != null) {
                 Result.success(response.body()!!)
             } else {
-                Result.failure(Exception("History error: ${response.code()}"))
+                Result.failure(Exception("History: ${response.code()}"))
             }
         } catch (e: Exception) {
             Result.failure(e)
