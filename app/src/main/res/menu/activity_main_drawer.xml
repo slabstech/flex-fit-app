@@ -1,20 +1,48 @@
 <?xml version="1.0" encoding="utf-8"?>
-<menu xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    tools:showIn="navigation_view">
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <group android:checkableBehavior="single">
+    <!-- === YOUR ORIGINAL 3 ITEMS — PRESERVED AT THE TOP === -->
+    <item
+        android:id="@+id/nav_home"
+        android:icon="@drawable/ic_menu_home"
+        android:title="Home" />
+
+    <item
+        android:id="@+id/nav_schedule"
+        android:icon="@drawable/ic_menu_schedule"
+        android:title="Schedule" />
+
+    <item
+        android:id="@+id/nav_userplan"
+        android:icon="@drawable/ic_menu_plan"
+        android:title="My Plan" />
+
+    <!-- === DIVIDER === -->
+    <item android:title="">
+        <menu />
+    </item>
+
+    <!-- === NEW GAMIFIED FLEXFIT SECTION === -->
+    <group android:id="@+id/group_gamification">
         <item
-            android:id="@+id/nav_home"
-            android:icon="@drawable/ic_menu_camera"
-            android:title="@string/menu_home" />
+            android:id="@+id/nav_dashboard"
+            android:icon="@drawable/ic_menu_dashboard"
+            android:title="Dashboard" />
+
         <item
-            android:id="@+id/nav_schedule"
-            android:icon="@drawable/ic_menu_gallery"
-            android:title="@string/menu_schedule" />
+            android:id="@+id/nav_workouts"
+            android:icon="@drawable/ic_menu_workout"
+            android:title="Workouts" />
+
         <item
-            android:id="@+id/nav_userplan"
-            android:icon="@drawable/ic_menu_slideshow"
-            android:title="@string/menu_userplan" />
+            android:id="@+id/nav_profile"
+            android:icon="@drawable/ic_menu_profile"
+            android:title="Profile" />
+
+        <item
+            android:id="@+id/nav_leaderboard"
+            android:icon="@drawable/ic_menu_leaderboard"
+            android:title="Leaderboard" />
     </group>
+
 </menu>
