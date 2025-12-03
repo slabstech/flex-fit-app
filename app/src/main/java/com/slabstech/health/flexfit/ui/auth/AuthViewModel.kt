@@ -1,7 +1,8 @@
-// File: app/src/main/java/com/slabstech/health/flexfit/ui/auth/AuthViewModel.kt
+// app/src/main/java/com/slabstech/health/flexfit/ui/auth/AuthViewModel.kt
 package com.slabstech.health.flexfit.ui.auth
 
 import android.app.Application
+import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.slabstech.health.flexfit.data.remote.RetrofitClient
@@ -11,6 +12,8 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
+
+private const val TAG = "AuthViewModel"
 
 data class AuthState(
     val email: String = "",
@@ -39,42 +42,61 @@ class AuthViewModel(application: Application) : AndroidViewModel(application) {
         _state.value = _state.value.copy(username = username.trim(), error = null)
     }
 
-    fun login(onSuccess: () -> Unit) {
-        if (_state.value.email.isBlank() || _state.value.password.isBlank()) {
-            _state.value = _state.value.copy(error = "Please fill email and password")
-            return
-        }
-
-        viewModelScope.launch {
-            _state.value = _state.value.copy(isLoading = true, error = null)
-            authRepository.login(_state.value.email, _state.value.password)
-                .onSuccess { token ->
-                    TokenManager.saveToken(getApplication(), token)
-                    onSuccess()
-                }
-                .onFailure {
-                    _state.value = _state.value.copy(error = "Wrong email or password")
-                }
-            _state.value = _state.value.copy(isLoading = false)
-        }
+    private fun isRegisterInputValid(): Boolean {
+        val s = _state.value
+        return s.username.isNotBlank() &&
+                s.email.isNotBlank() &&
+                s.password.length >= 6 &&
+                android.util.Patterns.EMAIL_ADDRESS.matcher(s.email).matches()
     }
 
     fun register(onSuccess: () -> Unit) {
-        if (_state.value.username.isBlank() || _state.value.email.isBlank() || _state.value.password.length < 6) {
-            _state.value = _state.value.copy(error = "Fill all fields correctly")
+        val s = _state.value
+        Log.d(TAG, "=== REGISTER ATTEMPT ===")
+        Log.d(TAG, "Username: '${s.username}' | Email: '${s.email}' | Pass: ${s.password.length} chars")
+
+        if (!isRegisterInputValid()) {
+            _state.value = _state.value.copy(error = "Invalid username, email, or password (min 6 chars)")
             return
         }
 
         viewModelScope.launch {
             _state.value = _state.value.copy(isLoading = true, error = null)
-            authRepository.register(_state.value.username, _state.value.email, _state.value.password)
+            authRepository.register(s.username, s.email, s.password)
                 .onSuccess {
-                    login(onSuccess) // Auto-login after register
+                    Log.d(TAG, "REGISTER SUCCESS → Auto-login")
+                    login(onSuccess)
                 }
-                .onFailure {
-                    _state.value = _state.value.copy(error = "Email already taken")
+                .onFailure { e ->
+                    Log.e(TAG, "REGISTER FAILED", e)
+                    _state.value = _state.value.copy(error = e.message ?: "Registration failed")
                 }
-            _state.value = _state.value.copy(isLoading = false)
+                .also { _state.value = _state.value.copy(isLoading = false) }
+        }
+    }
+
+    fun login(onSuccess: () -> Unit) {
+        val s = _state.value
+        Log.d(TAG, "=== LOGIN ATTEMPT === Email: '${s.email}'")
+
+        if (s.email.isBlank() || s.password.isBlank()) {
+            _state.value = _state.value.copy(error = "Fill email and password")
+            return
+        }
+
+        viewModelScope.launch {
+            _state.value = _state.value.copy(isLoading = true, error = null)
+            authRepository.login(s.email, s.password)
+                .onSuccess { token ->
+                    Log.d(TAG, "LOGIN SUCCESS! Token saved (${token.length} chars)")
+                    TokenManager.saveToken(getApplication(), token)
+                    onSuccess()
+                }
+                .onFailure { e ->
+                    Log.e(TAG, "LOGIN FAILED", e)
+                    _state.value = _state.value.copy(error = "Wrong email or password")
+                }
+                .also { _state.value = _state.value.copy(isLoading = false) }
         }
     }
 }

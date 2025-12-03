@@ -1,4 +1,4 @@
-// File: RegisterScreen.kt (100% working with latest Material3)
+// app/src/main/java/com/slabstech/health/flexfit/ui/auth/RegisterScreen.kt
 package com.slabstech.health.flexfit.ui.auth
 
 import androidx.compose.foundation.layout.*
@@ -27,6 +27,12 @@ fun RegisterScreen(
 ) {
     val state by viewModel.state.collectAsState()
     val scrollState = rememberScrollState()
+
+    // Local validation (replaces the old extension function)
+    val isFormValid = state.username.isNotBlank() &&
+            state.email.isNotBlank() &&
+            state.password.length >= 6 &&
+            android.util.Patterns.EMAIL_ADDRESS.matcher(state.email).matches()
 
     Scaffold(
         containerColor = Color(0xFFF8F9FA)
@@ -108,7 +114,7 @@ fun RegisterScreen(
 
             Button(
                 onClick = { viewModel.register(onRegisterSuccess) },
-                enabled = !state.isLoading && state.isValid(),
+                enabled = !state.isLoading && isFormValid,  // Fixed here!
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(56.dp),
@@ -155,10 +161,3 @@ fun RegisterScreen(
     }
 }
 
-// Add this extension to AuthState
-fun AuthState.isValid(): Boolean {
-    return email.isNotBlank() &&
-            password.length >= 6 &&
-            username.isNotBlank() &&
-            android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches()
-}
