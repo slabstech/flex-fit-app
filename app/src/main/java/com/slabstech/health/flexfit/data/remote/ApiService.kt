@@ -1,4 +1,4 @@
-// File: app/src/main/java/com/slabstech/health/flexfit/data/remote/ApiService.kt
+// app/src/main/java/com/slabstech/health/flexfit/data/remote/ApiService.kt
 package com.slabstech.health.flexfit.data.remote
 
 import com.slabstech.health.flexfit.data.remote.dto.*
@@ -7,8 +7,8 @@ import retrofit2.http.*
 
 interface ApiService {
 
-    // AUTH
     @FormUrlEncoded
+    @Headers("Accept: application/json")
     @POST("login")
     suspend fun login(
         @Field("username") username: String,
@@ -18,7 +18,6 @@ interface ApiService {
     @POST("register/")
     suspend fun register(@Body request: RegisterRequest): Response<UserPublic>
 
-    // PROTECTED ENDPOINTS — ALL WITH "/"
     @GET("dashboard/")
     suspend fun getDashboard(@Header("Authorization") token: String): Response<UserPublic>
 

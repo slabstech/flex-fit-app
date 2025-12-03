@@ -1,23 +1,23 @@
-// File: app/src/main/java/com/slabstech/health/flexfit/repository/AuthRepository.kt
+// app/src/main/java/com/slabstech/health/flexfit/repository/AuthRepository.kt
 package com.slabstech.health.flexfit.repository
 
 import com.slabstech.health.flexfit.data.remote.ApiService
 import com.slabstech.health.flexfit.data.remote.dto.RegisterRequest
-import com.slabstech.health.flexfit.utils.TokenManager
 
 class AuthRepository(private val api: ApiService) {
 
     suspend fun login(email: String, password: String): Result<String> = try {
         val response = api.login(username = email, password = password)
         if (response.isSuccessful) {
-            val token = response.body()?.access_token.orEmpty()
-            if (token.isNotBlank()) {
+            val token = response.body()?.access_token
+            if (!token.isNullOrBlank()) {
                 Result.success(token)
             } else {
-                Result.failure(Exception("Empty token"))
+                Result.failure(Exception("Empty token received"))
             }
         } else {
-            Result.failure(Exception("Invalid email or password"))
+            val errorBody = response.errorBody()?.string() ?: "Unknown error"
+            Result.failure(Exception("Login failed: ${response.code()} $errorBody"))
         }
     } catch (e: Exception) {
         Result.failure(e)
