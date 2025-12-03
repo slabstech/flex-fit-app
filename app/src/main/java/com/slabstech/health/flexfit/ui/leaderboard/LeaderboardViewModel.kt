@@ -1,20 +1,19 @@
 package com.slabstech.health.flexfit.ui.leaderboard
 
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import com.slabstech.health.flexfit.data.remote.dto.LeaderboardEntry
+import com.slabstech.health.flexfit.repository.GamificationRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
-
-data class LeaderboardEntry(
-    val rank: Int,
-    val name: String,
-    val streak: Int,
-    val xp: String
-)
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.launch
 
 class LeaderboardViewModel : ViewModel() {
+    private val repository = GamificationRepository()
 
-    private val _leaderboard = MutableStateFlow<List<LeaderboardEntry>>(emptyList())
-    val leaderboard: StateFlow<List<LeaderboardEntry>> = _leaderboard
+    private val _entries = MutableStateFlow<List<LeaderboardEntry>>(emptyList())
+    val entries: StateFlow<List<LeaderboardEntry>> = _entries.asStateFlow()
 
     private val _isLoading = MutableStateFlow(true)
     val isLoading: StateFlow<Boolean> = _isLoading
@@ -23,15 +22,19 @@ class LeaderboardViewModel : ViewModel() {
         loadLeaderboard()
     }
 
-    private fun loadLeaderboard() {
-        // Simulate API call
-        _leaderboard.value = listOf(
-            LeaderboardEntry(1, "Rajesh Singh", 98, "12,890 XP"),
-            LeaderboardEntry(2, "Priya Sharma", 82, "11,200 XP"),
-            LeaderboardEntry(3, "Vikram Patel", 65, "10,500 XP"),
-            LeaderboardEntry(4, "Neha Gupta", 51, "9,800 XP"),
-            LeaderboardEntry(5, "Arjun Mehta", 48, "9,200 XP")
-        )
-        _isLoading.value = false
+    fun loadLeaderboard() {
+        viewModelScope.launch {
+            _isLoading.value = true
+            repository.getLeaderboard()
+                .onSuccess { _entries.value = it }
+                .onFailure {
+                    // fallback
+                    _entries.value = listOf(
+                        LeaderboardEntry("gymbro", 1, 0, 0),
+                        LeaderboardEntry("flex-11", 1, 0, 0)
+                    )
+                }
+            _isLoading.value = false
+        }
     }
 }

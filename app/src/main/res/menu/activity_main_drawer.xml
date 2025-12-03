@@ -11,16 +11,19 @@
     <item
         android:id="@+id/nav_home"
         android:icon="@drawable/ic_menu_home"
+        android:visible="false"
         android:title="Home" />
 
     <item
         android:id="@+id/nav_schedule"
         android:icon="@drawable/ic_menu_schedule"
+        android:visible="false"
         android:title="Schedule" />
 
     <item
         android:id="@+id/nav_userplan"
         android:icon="@drawable/ic_menu_plan"
+        android:visible="false"
         android:title="My Plan" />
 
     <group android:checkableBehavior="single">

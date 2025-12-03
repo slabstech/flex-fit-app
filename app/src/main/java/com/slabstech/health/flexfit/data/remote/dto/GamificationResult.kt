@@ -4,20 +4,6 @@ import com.squareup.moshi.Json
 import com.squareup.moshi.JsonClass
 
 @JsonClass(generateAdapter = true)
-data class WorkoutCreateRequest(
-    @Json(name = "workout_type") val workoutType: String,
-    @Json(name = "duration_min") val durationMin: Int,
-    val calories: Int? = null
-)
-
-@JsonClass(generateAdapter = true)
-data class WorkoutResponse(
-    val id: Int,
-    @Json(name = "created_at") val createdAt: String,
-    val gamification: GamificationResult
-)
-
-@JsonClass(generateAdapter = true)
 data class GamificationResult(
     @Json(name = "streak_count") val streakCount: Int,
     @Json(name = "xp_earned") val xpEarned: Int,
