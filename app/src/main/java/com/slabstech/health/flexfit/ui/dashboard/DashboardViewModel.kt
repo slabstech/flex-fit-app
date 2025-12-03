@@ -49,4 +49,13 @@ class DashboardViewModel : ViewModel() {
                 .onSuccess { loadDashboard() }
         }
     }
+
+    fun logCustomWorkout(type: String, duration: Int, calories: Int) {
+        viewModelScope.launch {
+            val request = WorkoutCreateRequest(type, duration, calories)
+            repository.logWorkout(request).onSuccess {
+                loadDashboard()
+            }
+        }
+    }
 }

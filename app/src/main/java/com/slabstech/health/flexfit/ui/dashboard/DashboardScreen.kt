@@ -20,7 +20,10 @@ import androidx.compose.ui.unit.sp
 import java.util.Calendar
 
 @Composable
-fun DashboardScreen(viewModel: DashboardViewModel) {
+fun DashboardScreen(
+    viewModel: DashboardViewModel,
+    onAddWorkoutClick: () -> Unit = {}   // ← THIS LINE WAS MISSING / WRONG
+) {
     val state by viewModel.state.collectAsState()
 
     if (state.isLoading) {
@@ -36,36 +39,32 @@ fun DashboardScreen(viewModel: DashboardViewModel) {
             .background(Color(0xFFF8F9FA))
             .padding(20.dp)
     ) {
-        // Greeting + Streak
-        Row(
-            verticalAlignment = Alignment.CenterVertically,
-            modifier = Modifier.fillMaxWidth()
-        ) {
+        Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.fillMaxWidth()) {
             Column {
                 Text(
-                    text = "Good ${getGreeting()}, ${state.userName}!",
+                    "Good ${getGreeting()}, ${state.userName}!",
                     fontSize = 28.sp,
                     fontWeight = FontWeight.Bold,
                     color = Color(0xFF1A1A1A)
                 )
                 Text(
-                    text = "Day ${state.currentStreak} on fire!",
+                    "Day ${state.currentStreak} on fire!",
                     color = Color(0xFFFF3B30),
                     fontSize = 20.sp,
                     fontWeight = FontWeight.SemiBold
                 )
             }
-            Spacer(modifier = Modifier.weight(1f))  // CORRECT: weight on Spacer
-            Text("Fire", fontSize = 64.sp) // Replace with Lottie later
+            Spacer(Modifier.weight(1f))
+            Text("Fire", fontSize = 64.sp)
         }
 
         Spacer(Modifier.height(32.dp))
 
-        // Today's Goal Card
         Card(
             modifier = Modifier.fillMaxWidth(),
             colors = CardDefaults.cardColors(containerColor = Color(0xFFFF3B30)),
-            elevation = CardDefaults.cardElevation(16.dp)
+            elevation = CardDefaults.cardElevation(16.dp),
+            onClick = onAddWorkoutClick
         ) {
             Column(
                 modifier = Modifier.padding(32.dp),
@@ -76,47 +75,25 @@ fun DashboardScreen(viewModel: DashboardViewModel) {
                 Text("${state.todayWorkouts}/3", color = Color.White, fontSize = 64.sp, fontWeight = FontWeight.ExtraBold)
                 Text("Workouts Completed", color = Color.White.copy(0.9f), fontSize = 16.sp)
                 Spacer(Modifier.height(8.dp))
-                Text("Tap the + button to log one!", color = Color.White.copy(0.8f), fontSize = 14.sp)
+                Text("Tap to log a workout!", color = Color.White.copy(0.8f), fontSize = 14.sp)
             }
         }
 
         Spacer(Modifier.height(32.dp))
 
-        // Stats Row — FIXED: weight applied to the Row children
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.spacedBy(16.dp)
-        ) {
-            StatBox(
-                title = "Level",
-                value = "${state.currentLevel}",
-                subtitle = "Warrior",
-                modifier = Modifier.weight(1f)
-            )
-            StatBox(
-                title = "Total XP",
-                value = formatNumber(state.totalXp),
-                subtitle = "points",
-                modifier = Modifier.weight(1f)
-            )
-            StatBox(
-                title = "Rank",
-                value = "#${state.weeklyRank}",
-                subtitle = "This Week",
-                modifier = Modifier.weight(1f)
-            )
+        Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(16.dp)) {
+            StatBox("Level", "${state.currentLevel}", "Warrior", Modifier.weight(1f))
+            StatBox("Total XP", formatNumber(state.totalXp), "points", Modifier.weight(1f))
+            StatBox("Rank", "#${state.weeklyRank}", "This Week", Modifier.weight(1f))
         }
 
         Spacer(Modifier.height(32.dp))
 
-        // Recent Badges
         if (state.recentBadges.isNotEmpty()) {
-            Text("Recent Badges", fontSize = 20.sp, fontWeight = FontWeight.SemiBold, color = Color(0xFF1A1A1A))
+            Text("Recent Badges", fontSize = 20.sp, fontWeight = FontWeight.SemiBold)
             Spacer(Modifier.height(16.dp))
             LazyRow(horizontalArrangement = Arrangement.spacedBy(16.dp)) {
-                items(state.recentBadges) { badge ->
-                    BadgeItem(badge)
-                }
+                items(state.recentBadges) { BadgeItem(it) }
             }
         }
 
@@ -124,22 +101,11 @@ fun DashboardScreen(viewModel: DashboardViewModel) {
     }
 }
 
+// Keep all your existing composables below (StatBox, BadgeItem, etc.)
 @Composable
-fun StatBox(
-    title: String,
-    value: String,
-    subtitle: String,
-    modifier: Modifier = Modifier
-) {
-    Card(
-        colors = CardDefaults.cardColors(containerColor = Color.White),
-        elevation = CardDefaults.cardElevation(8.dp),
-        modifier = modifier
-    ) {
-        Column(
-            horizontalAlignment = Alignment.CenterHorizontally,
-            modifier = Modifier.padding(16.dp)
-        ) {
+fun StatBox(title: String, value: String, subtitle: String, modifier: Modifier = Modifier) {
+    Card(colors = CardDefaults.cardColors(containerColor = Color.White), elevation = CardDefaults.cardElevation(8.dp), modifier = modifier) {
+        Column(horizontalAlignment = Alignment.CenterHorizontally, modifier = Modifier.padding(16.dp)) {
             Text(value, fontSize = 32.sp, fontWeight = FontWeight.ExtraBold, color = Color(0xFFFF3B30))
             Text(title, fontWeight = FontWeight.Medium, fontSize = 14.sp)
             Text(subtitle, color = Color.Gray, fontSize = 12.sp)
@@ -150,34 +116,18 @@ fun StatBox(
 @Composable
 fun BadgeItem(name: String) {
     Column(horizontalAlignment = Alignment.CenterHorizontally) {
-        Box(
-            modifier = Modifier
-                .size(70.dp)
-                .clip(CircleShape)
-                .background(Color(0xFFFFD700)),
-            contentAlignment = Alignment.Center
-        ) {
-            Text("Trophy", fontSize = 36.sp)
+        Box(modifier = Modifier.size(70.dp).clip(CircleShape).background(Color(0xFFFFD700)), contentAlignment = Alignment.Center) {
+            Text("Trophy Trophy", fontSize = 36.sp)
         }
         Spacer(Modifier.height(8.dp))
-        Text(
-            text = name,
-            fontSize = 12.sp,
-            fontWeight = FontWeight.Medium,
-            textAlign = TextAlign.Center,
-            modifier = Modifier.width(80.dp)
-        )
+        Text(name, fontSize = 12.sp, fontWeight = FontWeight.Medium, textAlign = TextAlign.Center, modifier = Modifier.width(80.dp))
     }
 }
 
-private fun getGreeting(): String {
-    return when (Calendar.getInstance().get(Calendar.HOUR_OF_DAY)) {
-        in 0..11 -> "Morning"
-        in 12..16 -> "Afternoon"
-        else -> "Evening"
-    }
+private fun getGreeting(): String = when (Calendar.getInstance().get(Calendar.HOUR_OF_DAY)) {
+    in 0..11 -> "Morning"
+    in 12..16 -> "Afternoon"
+    else -> "Evening"
 }
 
-private fun formatNumber(num: Int): String {
-    return if (num >= 1000) "${num / 1000}k" else num.toString()
-}
+private fun formatNumber(num: Int): String = if (num >= 1000) "${num / 1000}k" else num.toString()

@@ -4,6 +4,8 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.compose.foundation.layout.Box
+import androidx.compose.runtime.*
 import androidx.compose.ui.platform.ComposeView
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
@@ -12,6 +14,7 @@ import com.slabstech.health.flexfit.ui.theme.FlexFitTheme
 class DashboardFragment : Fragment() {
 
     private val viewModel: DashboardViewModel by viewModels()
+    private var showWorkoutModal by mutableStateOf(false)
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -21,14 +24,31 @@ class DashboardFragment : Fragment() {
         return ComposeView(requireContext()).apply {
             setContent {
                 FlexFitTheme {
-                    DashboardScreen(viewModel = viewModel)
+                    Box {
+                        DashboardScreen(
+                            viewModel = viewModel,
+                            onAddWorkoutClick = { showWorkoutModal = true }
+                        )
+
+                        if (showWorkoutModal) {
+                            WorkoutPickerModal(
+                                onDismiss = { showWorkoutModal = false },
+                                onWorkoutSelected = { workout ->
+                                    viewModel.logCustomWorkout(
+                                        type = workout.name,
+                                        duration = workout.durationMin,
+                                        calories = workout.calories
+                                    )
+                                }
+                            )
+                        }
+                    }
                 }
             }
         }
     }
 
-    // This method is called by MainActivity when FAB is pressed
     fun logQuickWorkout() {
-        viewModel.logTodayWorkout()
+        showWorkoutModal = true
     }
 }

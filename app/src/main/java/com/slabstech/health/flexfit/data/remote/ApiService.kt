@@ -1,6 +1,7 @@
 package com.slabstech.health.flexfit.network
 
 import com.slabstech.health.flexfit.data.remote.dto.*
+import com.slabstech.health.flexfit.ui.workouts.WorkoutLog
 import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.GET
@@ -15,4 +16,7 @@ interface ApiService {
 
     @GET("dashboard/")
     suspend fun getDashboard(): Response<DashboardResponse>
+
+    @GET("workouts/history/")
+    suspend fun getWorkoutHistory(): Response<List<WorkoutLog>>
 }
