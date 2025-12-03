@@ -1,15 +1,10 @@
-package com.slabstech.health.flexfit.data.remote
+package com.slabstech.health.flexfit.network
 
-import com.slabstech.health.flexfit.data.remote.dto.WorkoutCreateRequest
-import com.slabstech.health.flexfit.data.remote.dto.WorkoutResponse
-import retrofit2.http.Body
+import com.slabstech.health.flexfit.data.remote.dto.GamificationResult
+import retrofit2.Response
 import retrofit2.http.POST
 
 interface ApiService {
-    @POST("workouts/")
-    suspend fun logWorkout(@Body request: WorkoutCreateRequest): WorkoutResponse
-
-    companion object {
-        const val BASE_URL = "https://your.gov/api"  // CHANGE TO YOUR FASTAPI URL
-    }
+    @POST("log-workout")
+    suspend fun logWorkout(): Response<GamificationResult>
 }

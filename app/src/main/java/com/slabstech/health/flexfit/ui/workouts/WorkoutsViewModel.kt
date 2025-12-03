@@ -2,19 +2,16 @@ package com.slabstech.health.flexfit.ui.workouts
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.slabstech.health.flexfit.repository.GamificationRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 
 data class WorkoutHistoryItem(
     val type: String,
-    val details: String,
-    val date: String = "Today"
+    val details: String
 )
 
 class WorkoutsViewModel : ViewModel() {
-    private val repository = GamificationRepository()
 
     private val _workouts = MutableStateFlow<List<WorkoutHistoryItem>>(emptyList())
     val workouts: StateFlow<List<WorkoutHistoryItem>> = _workouts
@@ -26,17 +23,14 @@ class WorkoutsViewModel : ViewModel() {
         loadWorkoutHistory()
     }
 
-    fun loadWorkoutHistory() {
+    private fun loadWorkoutHistory() {
         viewModelScope.launch {
             _isLoading.value = true
-            // TODO: Call real /workouts/history API
-            // Simulated data
+            // Replace with real API later
             _workouts.value = listOf(
                 WorkoutHistoryItem("Strength Training", "45 min • 350 kcal"),
                 WorkoutHistoryItem("HIIT Cardio", "30 min • 420 kcal"),
-                WorkoutHistoryItem("Zumba Dance", "60 min • 380 kcal"),
-                WorkoutHistoryItem("Yoga Flow", "50 min • 180 kcal"),
-                WorkoutHistoryItem("CrossFit WOD", "40 min • 500 kcal")
+                WorkoutHistoryItem("Yoga Flow", "60 min • 180 kcal")
             )
             _isLoading.value = false
         }
