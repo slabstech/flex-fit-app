@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<network-security-config>
+    <base-config cleartextTrafficPermitted="false">
+        <trust-anchors>
+            <!-- Trust system CAs (normal) -->
+            <certificates src="system" />
+            <!-- ALSO trust user-added CAs (this is what fixes Let's Encrypt on old Android) -->
+            <certificates src="user" />
+        </trust-anchors>
+    </base-config>
+</network-security-config>
