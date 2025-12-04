@@ -46,13 +46,13 @@ object RetrofitClient {
                 .build()
 
             val moshi = Moshi.Builder()
-                .add(KotlinJsonAdapterFactory())  // THIS LINE FIXES EVERYTHING
+                .add(KotlinJsonAdapterFactory())
                 .build()
 
             retrofit = Retrofit.Builder()
                 .baseUrl(BASE_URL)
                 .client(okHttpClient!!)
-                .addConverterFactory(MoshiConverterFactory.create(moshi))
+                .addConverterFactory(MoshiConverterFactory.create(moshi).asLenient()) // THIS LINE FIXES EVERYTHING
                 .build()
         }
         return retrofit!!.create(ApiService::class.java)

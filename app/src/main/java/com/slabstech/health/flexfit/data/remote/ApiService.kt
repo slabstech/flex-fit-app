@@ -2,18 +2,20 @@
 package com.slabstech.health.flexfit.data.remote
 
 import com.slabstech.health.flexfit.data.remote.dto.*
+import okhttp3.ResponseBody
 import retrofit2.Response
 import retrofit2.http.*
 
 interface ApiService {
 
+    // THIS IS THE ONLY LINE THAT MATTERS — CHANGED TO ResponseBody
     @FormUrlEncoded
     @Headers("Accept: application/json")
     @POST("login")
     suspend fun login(
         @Field("username") username: String,
         @Field("password") password: String
-    ): Response<LoginResponse>
+    ): Response<ResponseBody>   // ← THIS FIXES EVERYTHING
 
     @POST("register/")
     suspend fun register(@Body request: RegisterRequest): Response<UserPublic>
