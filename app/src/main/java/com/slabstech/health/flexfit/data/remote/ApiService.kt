@@ -8,17 +8,22 @@ import retrofit2.http.*
 
 interface ApiService {
 
-    // THIS IS THE ONLY LINE THAT MATTERS — CHANGED TO ResponseBody
+    // LOGIN – already perfect
     @FormUrlEncoded
     @Headers("Accept: application/json")
     @POST("login")
     suspend fun login(
         @Field("username") username: String,
         @Field("password") password: String
-    ): Response<ResponseBody>   // ← THIS FIXES EVERYTHING
+    ): Response<ResponseBody>
 
+    // REGISTER – NOW SAFE (same pattern as login)
     @POST("register/")
-    suspend fun register(@Body request: RegisterRequest): Response<UserPublic>
+    suspend fun register(@Body request: RegisterRequest): Response<ResponseBody>
+
+    // Optional: also support without trailing slash (prevents 404 → HTML crash)
+    @POST("register")
+    suspend fun registerNoSlash(@Body request: RegisterRequest): Response<ResponseBody>
 
     @GET("dashboard/")
     suspend fun getDashboard(@Header("Authorization") token: String): Response<UserPublic>
