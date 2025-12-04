@@ -1,10 +1,9 @@
-// DashboardViewModel.kt
+// app/src/main/java/com/slabstech/health/flexfit/ui/dashboard/DashboardViewModel.kt
 package com.slabstech.health.flexfit.ui.dashboard
 
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
-import com.slabstech.health.flexfit.data.remote.dto.UserPublic
 import com.slabstech.health.flexfit.data.remote.dto.WorkoutCreateRequest
 import com.slabstech.health.flexfit.repository.GamificationRepository
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -14,41 +13,44 @@ import kotlinx.coroutines.launch
 
 class DashboardViewModel(application: Application) : AndroidViewModel(application) {
 
-    private val repository = GamificationRepository(application)  // ← Context passed!
+    private val repository = GamificationRepository(application.applicationContext)
 
     private val _state = MutableStateFlow(DashboardState(isLoading = true))
     val state: StateFlow<DashboardState> = _state.asStateFlow()
 
-    init { loadDashboard() }
+    init {
+        loadDashboard()
+    }
 
     fun loadDashboard() {
         viewModelScope.launch {
-            _state.value = _state.value.copy(isLoading = true)
+            _state.value = _state.value.copy(isLoading = true, error = null)
 
             repository.getDashboard()
                 .onSuccess { user ->
                     _state.value = DashboardState(
+                        userName = user.username.replaceFirstChar { it.uppercaseChar() },
                         currentStreak = user.streakCount,
-                        todayWorkouts = 1, // You can improve this later with real count
+                        todayWorkouts = user.totalWorkouts, // Real count from backend!
                         currentLevel = user.level,
                         totalXp = user.xp,
-                        weeklyRank = 999, // Will come from leaderboard later
-                        recentBadges = listOf(), // Optional: fetch from /badges later
-                        userName = user.username,
-                        isLoading = false
+                        weeklyRank = 999, // TODO: later from leaderboard
+                        recentBadges = emptyList(), // TODO: badges later
+                        isLoading = false,
+                        error = null
                     )
                 }
-                .onFailure {
-                    // Fallback only for demo — remove later
+                .onFailure { exception ->
                     _state.value = DashboardState(
-                        currentStreak = 7,
-                        todayWorkouts = 1,
-                        currentLevel = 12,
-                        totalXp = 8450,
-                        weeklyRank = 42,
-                        recentBadges = listOf("7-Day Streak"),
-                        userName = "FlexHero",
-                        isLoading = false
+                        userName = "User",
+                        currentStreak = 0,
+                        todayWorkouts = 0,
+                        currentLevel = 1,
+                        totalXp = 0,
+                        weeklyRank = 999,
+                        recentBadges = emptyList(),
+                        isLoading = false,
+                        error = "Failed to load profile. Pull to refresh."
                     )
                 }
         }
@@ -57,15 +59,17 @@ class DashboardViewModel(application: Application) : AndroidViewModel(applicatio
     fun logCustomWorkout(type: String, duration: Int, calories: Int?) {
         viewModelScope.launch {
             val request = WorkoutCreateRequest(
-                workoutType = type,      // ← Correct property name
-                durationMin = duration,  // ← Correct property name
+                workoutType = type,
+                durationMin = duration,
                 calories = calories
             )
+
             repository.logWorkout(request)
-                .onSuccess { loadDashboard() }
-                .onFailure { throwable ->
-                    // Optional: show error toast
-                    println("Workout log failed: $throwable")
+                .onSuccess {
+                    loadDashboard() // Refresh with new XP, streak, workout count
+                }
+                .onFailure {
+                    // You can emit error here later
                 }
         }
     }

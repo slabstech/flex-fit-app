@@ -55,6 +55,11 @@ class DashboardFragment : Fragment() {
         }
     }
 
+    // DashboardFragment.kt (just add onResume)
+    override fun onResume() {
+        super.onResume()
+        viewModel.loadDashboard() // Always fresh when user returns
+    }
     // Optional: hide modal when leaving fragment
     override fun onDestroyView() {
         super.onDestroyView()

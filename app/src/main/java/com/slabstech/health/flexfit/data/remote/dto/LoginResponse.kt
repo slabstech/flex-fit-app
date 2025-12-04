@@ -1,4 +1,4 @@
-// File: app/src/main/java/com/slabstech/health/flexfit/data/remote/dto/LoginResponse.kt
+// app/src/main/java/com/slabstech/health/flexfit/data/remote/dto/LoginResponse.kt
 package com.slabstech.health.flexfit.data.remote.dto
 
 import com.squareup.moshi.Json
