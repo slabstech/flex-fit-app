@@ -1,7 +1,10 @@
+// ProfileViewModel.kt
 package com.slabstech.health.flexfit.ui.profile
 
-import androidx.lifecycle.ViewModel
+import android.app.Application
+import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
+import com.slabstech.health.flexfit.data.remote.dto.UserPublic
 import com.slabstech.health.flexfit.repository.GamificationRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -18,8 +21,9 @@ data class ProfileState(
     val isLoading: Boolean = true
 )
 
-class ProfileViewModel : ViewModel() {
-    private val repository = GamificationRepository()
+class ProfileViewModel(application: Application) : AndroidViewModel(application) {
+
+    private val repository = GamificationRepository(application)  // Context passed!
 
     private val _state = MutableStateFlow(ProfileState())
     val state: StateFlow<ProfileState> = _state.asStateFlow()
@@ -32,21 +36,20 @@ class ProfileViewModel : ViewModel() {
         viewModelScope.launch {
             _state.value = _state.value.copy(isLoading = true)
 
-            // Use getDashboard() or create a dedicated getProfile() endpoint
             repository.getDashboard()
-                .onSuccess { data ->
+                .onSuccess { user: UserPublic ->
                     _state.value = ProfileState(
-                        userName = data.userName,
-                        level = data.currentLevel,
-                        totalXp = data.totalXp,
-                        currentStreak = data.currentStreak,
-                        weeklyRank = data.weeklyRank,
-                        recentBadges = data.recentBadges,
+                        userName = user.username,
+                        level = user.level,
+                        totalXp = user.xp,
+                        currentStreak = user.streakCount,
+                        weeklyRank = 999, // You can add real rank later via leaderboard
+                        recentBadges = listOf(), // Add badge endpoint later if needed
                         isLoading = false
                     )
                 }
                 .onFailure {
-                    // Fallback mock data
+                    // Fallback only for demo – remove in production
                     _state.value = ProfileState(
                         userName = "Sachin",
                         level = 15,
