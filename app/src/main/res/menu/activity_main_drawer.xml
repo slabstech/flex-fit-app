@@ -41,6 +41,11 @@
             android:id="@+id/nav_leaderboard"
             android:icon="@drawable/ic_menu_leaderboard"
             android:title="Leaderboard" />
+
+        <item
+            android:id="@+id/nav_attendance"
+            android:icon="@drawable/ic_menu_profile"
+            android:title="Attendance" />
     </group>
 
 </menu>
