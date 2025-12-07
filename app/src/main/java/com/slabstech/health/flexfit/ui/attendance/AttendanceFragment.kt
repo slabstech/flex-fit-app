@@ -1,111 +1,84 @@
+// ui/attendance/AttendanceFragment.kt
 package com.slabstech.health.flexfit.ui.attendance
+
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
-import android.widget.TextView
 import android.widget.Toast
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
 import com.google.zxing.integration.android.IntentIntegrator
-import com.slabstech.health.flexfit.R
-import okhttp3.OkHttpClient
-import okhttp3.logging.HttpLoggingInterceptor
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
-import retrofit2.Retrofit
-import retrofit2.converter.gson.GsonConverterFactory
-import retrofit2.http.Body
-import retrofit2.http.POST
-
-data class AttendanceRequest(val student_id: String, val qr_code: String)
-data class AttendanceResponse(val message: String, val student_name: String? = null, val timestamp: String? = null)
-
-interface ApiService {
-    @POST("/attendance2")
-    fun markAttendance(@Body request: AttendanceRequest): Call<AttendanceResponse>
-}
+import com.slabstech.health.flexfit.databinding.FragmentAttendanceBinding
+import com.slabstech.health.flexfit.repository.AttendanceRepository
 
 class AttendanceFragment : Fragment() {
 
-    private lateinit var apiService: ApiService
-    private val STUDENT_ID = "STD001" // Change here
-    private val SERVER_URL = "https://stats.flex-fitness.club/"
+    private var _binding: FragmentAttendanceBinding? = null
+    private val binding get() = _binding!!
 
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
-        val view = inflater.inflate(R.layout.fragment_attendance, container, false)
-
-        // Setup Retrofit
-        val logging = HttpLoggingInterceptor().apply { level = HttpLoggingInterceptor.Level.BODY }
-        val client = OkHttpClient.Builder().addInterceptor(logging).build()
-
-        val retrofit = Retrofit.Builder()
-            .baseUrl(SERVER_URL)
-            .client(client)
-            .addConverterFactory(GsonConverterFactory.create())
-            .build()
-
-        apiService = retrofit.create(ApiService::class.java)
-
-        view.findViewById<TextView>(R.id.tvStudentInfo).text = "Student ID: $STUDENT_ID"
-        view.findViewById<Button>(R.id.btnScan).setOnClickListener { startQRScanner() }
-
-        return view
+    private val viewModel: AttendanceViewModel by viewModels {
+        object : ViewModelProvider.Factory {
+            override fun <T : ViewModel> create(modelClass: Class<T>): T {
+                @Suppress("UNCHECKED_CAST")
+                return AttendanceViewModel(AttendanceRepository(requireContext())) as T
+            }
+        }
     }
 
-    private fun startQRScanner() {
-        IntentIntegrator.forSupportFragment(this).apply {
-            setDesiredBarcodeFormats(IntentIntegrator.QR_CODE)
-            setPrompt("Scan today's attendance QR code")
-            setCameraId(0)
-            setBeepEnabled(true)
-            setBarcodeImageEnabled(false)
-            initiateScan()
+    private val studentId: String
+        get() = "STD001" // ← Change or load from SharedPrefs / login later
+
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
+        _binding = FragmentAttendanceBinding.inflate(inflater, container, false)
+        return binding.root
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+        binding.tvStudentInfo.text = "Student ID: $studentId"
+        binding.btnScan.setOnClickListener { startScanner() }
+
+        viewModel.result.observe(viewLifecycleOwner) { result ->
+            result.onSuccess { response ->
+                Toast.makeText(
+                    requireContext(),
+                    "${response.message}\nWelcome ${response.student_name.orEmpty()}",
+                    Toast.LENGTH_LONG
+                ).show()
+            }.onFailure { exception ->
+                Toast.makeText(requireContext(), exception.message ?: "Error", Toast.LENGTH_LONG).show()
+            }
         }
+
+        viewModel.isLoading.observe(viewLifecycleOwner) { loading ->
+            binding.progressBar.visibility = if (loading) View.VISIBLE else View.GONE
+            binding.btnScan.isEnabled = !loading
+        }
+    }
+
+    private fun startScanner() {
+        IntentIntegrator.forSupportFragment(this)
+            .setDesiredBarcodeFormats(IntentIntegrator.QR_CODE)
+            .setPrompt("Scan today's gym QR code")
+            .setBeepEnabled(true)
+            .initiateScan()
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: android.content.Intent?) {
         val result = IntentIntegrator.parseActivityResult(requestCode, resultCode, data)
-        if (result != null) {
-            if (result.contents == null) {
-                Toast.makeText(requireContext(), "Scan cancelled", Toast.LENGTH_SHORT).show()
-            } else {
-                markAttendance(result.contents.trim())
-            }
-        } else {
+        if (result?.contents != null) {
+            viewModel.markAttendance(studentId, result.contents.trim())
+        } else if (result == null) {
             super.onActivityResult(requestCode, resultCode, data)
         }
     }
 
-    private fun markAttendance(scannedQrCode: String) {
-        val request = AttendanceRequest(STUDENT_ID, scannedQrCode)
-
-        apiService.markAttendance(request).enqueue(object : Callback<AttendanceResponse> {
-            override fun onResponse(call: Call<AttendanceResponse>, response: Response<AttendanceResponse>) {
-                if (response.isSuccessful) {
-                    val body = response.body()
-                    Toast.makeText(
-                        requireContext(),
-                        "${body?.message}\nWelcome ${body?.student_name.orEmpty()}",
-                        Toast.LENGTH_LONG
-                    ).show()
-                } else {
-                    val msg = when (response.code()) {
-                        400 -> "Invalid QR or already attended"
-                        404 -> "Student not found"
-                        else -> "Server error: ${response.code()}"
-                    }
-                    Toast.makeText(requireContext(), msg, Toast.LENGTH_LONG).show()
-                }
-            }
-
-            override fun onFailure(call: Call<AttendanceResponse>, t: Throwable) {
-                Toast.makeText(requireContext(), "Network error: ${t.message}", Toast.LENGTH_LONG).show()
-            }
-        })
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 }
