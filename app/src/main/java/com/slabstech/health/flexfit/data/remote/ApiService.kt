@@ -39,4 +39,9 @@ interface ApiService {
         @Header("Authorization") token: String,
         @Body workout: WorkoutCreateRequest
     ): Response<WorkoutResponse>
+
+    @POST("attendance2")
+    suspend fun markAttendance(
+        @Body request: AttendanceRequest
+    ): Response<AttendanceResponse>
 }
