@@ -6,6 +6,7 @@
         android:id="@+id/nav_dashboard"
         android:icon="@drawable/ic_menu_dashboard"
         android:title="Dashboard"
+        android:visible="false"
         android:checked="true" />   <!-- Auto-selected on start -->
 
     <item
@@ -30,11 +31,12 @@
         <item
             android:id="@+id/nav_workouts"
             android:icon="@drawable/ic_menu_workout"
+            android:visible="false"
             android:title="Workouts" />
 
         <item
             android:id="@+id/nav_profile"
-            android:icon="@drawable/ic_menu_profile"
+            android:icon="@drawable/ic_menu_profile"  android:visible="false"
             android:title="Profile" />
 
         <item
@@ -45,6 +47,7 @@
         <item
             android:id="@+id/nav_attendance"
             android:icon="@drawable/ic_menu_profile"
+            android:visible="false"
             android:title="Attendance" />
     </group>
 
