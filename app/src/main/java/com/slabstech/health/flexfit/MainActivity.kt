@@ -48,7 +48,8 @@ class MainActivity : AppCompatActivity() {
                 R.id.nav_leaderboard,
                 R.id.nav_profile,
                 R.id.nav_schedule,
-                R.id.nav_userplan
+                R.id.nav_userplan,
+                R.id.nav_attendance
                 // R.id.nav_home removed if you use dashboard as home
             ),
             drawerLayout

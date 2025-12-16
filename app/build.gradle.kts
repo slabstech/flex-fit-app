@@ -12,7 +12,7 @@ android {
         applicationId = "com.slabstech.health.flexfit"
         minSdk = 24
         targetSdk = 36
-        versionCode = 10
+        versionCode = 12
         versionName = "0.0.1"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
@@ -82,6 +82,10 @@ dependencies {
     implementation(libs.kotlinx.coroutines.android)
     implementation("com.airbnb.android:lottie-compose:6.5.0")
 
+
+    // ZXing QR Scanner
+    implementation("com.journeyapps:zxing-android-embedded:4.3.0")
+    implementation("com.squareup.retrofit2:converter-gson:2.9.0")
     // Testing
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)

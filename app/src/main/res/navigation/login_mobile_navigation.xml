@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/mobile_navigation"
-    app:startDestination="@id/nav_schedule">   <!-- THIS IS THE KEY LINE -->
+    app:startDestination="@id/nav_dashboard">   <!-- THIS IS THE KEY LINE -->
 
     <!-- DASHBOARD — NOW THE HOME SCREEN -->
     <fragment
@@ -17,11 +17,6 @@
         android:id="@+id/nav_home"
         android:name="com.slabstech.health.flexfit.ui.home.HomeFragment"
         android:label="@string/menu_home"
-        tools:layout="@layout/fragment_home" />
-    <fragment
-        android:id="@+id/nav_gym_schedule"
-        android:name="com.slabstech.health.flexfit.ui.events.GymScheduleFragment"
-        android:label="GYM Schedule"
         tools:layout="@layout/fragment_home" />
 
     <fragment

@@ -5,6 +5,7 @@
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.CAMERA" />
 
+
     <application
         android:allowBackup="true"
         android:networkSecurityConfig="@xml/network_security_config"
@@ -18,34 +19,30 @@
         android:theme="@style/Theme.FlexFit"
         tools:targetApi="33">
 
-        <!-- NEW: MainActivity is now the LAUNCHER activity -->
-        <!-- User opens app → directly sees Workout Routine (no login required yet) -->
+        <!-- 1. Splash / Auth Launcher Activity (First screen user sees) -->
         <activity
-            android:name=".MainActivity"
+            android:name=".SplashActivity"
             android:exported="true"
-            android:label="@string/app_name"
-            android:theme="@style/Theme.FlexFit.NoActionBar">
+            android:theme="@style/Theme.FlexFit.Splash">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
 
-        <!-- Auth Activity - Now launched only when user wants to log in (e.g., from a "Profile" menu item) -->
+        <!-- 2. Auth Activity (Login + Register) -->
         <activity
             android:name=".ui.auth.AuthActivity"
             android:exported="false"
             android:theme="@style/Theme.FlexFit.NoActionBar"
             android:windowSoftInputMode="adjustResize" />
 
-        <!-- SplashActivity - Removed or optional now -->
-        <!-- If you still want a splash screen (branding), keep it and make it forward to MainActivity immediately -->
-        <!-- Otherwise, you can delete SplashActivity entirely -->
+        <!-- 3. Main App (Dashboard, Leaderboard, etc.) -->
         <activity
-            android:name=".SplashActivity"
+            android:name=".MainActivity"
             android:exported="false"
-            android:theme="@style/Theme.FlexFit.Splash" />
-        <!-- No intent-filter → not launchable from home screen -->
+            android:label="@string/app_name"
+            android:theme="@style/Theme.FlexFit.NoActionBar" />
 
     </application>
 
