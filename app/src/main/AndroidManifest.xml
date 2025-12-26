@@ -18,8 +18,6 @@
         android:theme="@style/Theme.FlexFit"
         tools:targetApi="33">
 
-        <!-- NEW: MainActivity is now the LAUNCHER activity -->
-        <!-- User opens app → directly sees Workout Routine (no login required yet) -->
         <activity
             android:name=".MainActivity"
             android:exported="true"
@@ -31,16 +29,14 @@
             </intent-filter>
         </activity>
 
-        <!-- Auth Activity - Now launched only when user wants to log in (e.g., from a "Profile" menu item) -->
+
         <activity
             android:name=".ui.auth.AuthActivity"
             android:exported="false"
             android:theme="@style/Theme.FlexFit.NoActionBar"
             android:windowSoftInputMode="adjustResize" />
 
-        <!-- SplashActivity - Removed or optional now -->
-        <!-- If you still want a splash screen (branding), keep it and make it forward to MainActivity immediately -->
-        <!-- Otherwise, you can delete SplashActivity entirely -->
+
         <activity
             android:name=".SplashActivity"
             android:exported="false"

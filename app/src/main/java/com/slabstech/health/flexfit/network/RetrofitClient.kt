@@ -12,7 +12,7 @@ import retrofit2.converter.moshi.MoshiConverterFactory
 import java.util.concurrent.TimeUnit
 
 object RetrofitClient {
-    private const val BASE_URL = "https:///"
+    private const val BASE_URL = "https://"
 
     private var okHttpClient: OkHttpClient? = null
     private var retrofit: Retrofit? = null
